@@ -22,14 +22,33 @@ function checksExistsUserAccount(request, response, next) {
 
 function checksCreateTodosUserAvailability(request, response, next) {
   const { user } = request
-  if(user.pro || user.todos.length < 10) {
+  if (user.pro || user.todos.length < 10) {
     return next()
   }
   return response.status(403)
 }
 
 function checksTodoExists(request, response, next) {
-  // Complete aqui
+  const { username } = request.headers
+  const { id } = request.params
+  const user = users.find(user => user.username === username)
+  const uuiIsValid = validate(id)
+  if (!user) {  // user nao existe
+    return response.status(404)
+  }
+  if (!uuiIsValid) {
+    return response.status(400)
+  }
+  if (!user.todos.length > 0) {
+    return response.status(404)
+  }
+  const todoIsValid = user.todos.filter(todo => todo.id === id)
+  if (!todoIsValid) {
+    return response.status(404)
+  }
+  request.user = user
+  request.todo = todoIsValid[0]
+  return next()
 }
 
 function findUserById(request, response, next) {

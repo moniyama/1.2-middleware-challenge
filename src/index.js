@@ -33,7 +33,7 @@ function checksTodoExists(request, response, next) {
   const { id } = request.params
   const user = users.find(user => user.username === username)
   const uuiIsValid = validate(id)
-  if (!user) {  // user nao existe
+  if (!user) {
     return response.status(404)
   }
   if (!uuiIsValid) {
@@ -52,7 +52,17 @@ function checksTodoExists(request, response, next) {
 }
 
 function findUserById(request, response, next) {
-  // Complete aqui
+  const { id } = request.params
+  const uuiIsValid = validate(id)
+  if (!uuiIsValid) {
+    return response.status(404)
+  }
+  const user = users.find(user => user.id === id)
+  if (!user) {
+    return response.status(404)
+  }
+  request.user = user
+  next()
 }
 
 app.post('/users', (request, response) => {
